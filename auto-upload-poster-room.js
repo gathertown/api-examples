@@ -2,318 +2,186 @@ const axios = require("axios");
 const fs = require("fs");
 
 const { SPACE_ID, API_KEY } = require("./config");
-const MAP_ID = "poster-room-1";
+const MAP_ID = "custom-entrance";
+const WIDTH = 94;
+const HEIGHT = 57;
 
-const posterPathes = [
-  "/home/npfoss/Downloads/poster1.jpg",
-  "/home/npfoss/Downloads/poster2.jpg",
-];
+const zoomZoneImg =
+	"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2Fb2c9fbf1-4fc1-4b59-9ef1-e3de6b69981f?alt=media&token=cb74684a-3c6e-4260-b51c-c917e078124d";
+const zoomZoneImgActive =
+	"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F8933cfdc-d180-4324-b8ba-5a191dfdb6dc?alt=media&token=4711da59-bf68-4c22-a53e-96944b4204c7";
 
-const posterImages = [
-  "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F3f21ccf5-ef61-480a-bf6b-1ebcd428220d?alt=media&token=553f6bd4-753b-4130-b058-1dac9d88fcef",
-  "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2Fe98b8235-b7d2-40f4-a7df-c76c00fc6dc6?alt=media&token=4fa372a2-ac01-4033-ab0e-3b0a37075b17",
-  "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F2bc01a36-33cb-4d5f-a332-677e41f3b1cc?alt=media&token=b789eb73-6cb3-4505-8181-e1b3f0edeea6",
-  "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F5962bf2d-e5c4-4b96-ae66-bec1c86c5936?alt=media&token=713693b7-1bd5-428f-b28f-e3ded2f47034",
-  "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F23f25338-dceb-47ec-84c3-232811fba8a3?alt=media&token=37ef4b36-7e62-4322-b3b3-d27abc8be6e5",
-];
-
-const writeMap = async () => {
-  const posterLinks = await Promise.all(
-    posterPathes.map(
-      (path) =>
-        new Promise((resolve, reject) =>
-          fs.readFile(path, function (err, data) {
-            if (err) reject(err); // Fail if the file can't be read.
-            console.log(data);
-            axios
-              .post("https://staging.gather.town/api/uploadImage", {
-                bytes: data,
-              })
-              .then((res) => resolve(res.data));
-          })
-        )
-    )
-  );
-
-  let posters = [];
-  let count = 0;
-  // arrange the posters in rows
-  for (let y = 4; y < 17; y += 6) {
-    for (let x = 3; x < 32; x += 4) {
-      posters.push({
-        x: x,
-        y: y,
-        type: 2,
-        distThreshold: 0,
-        width: 3,
-        height: 5,
-        normal: posterImages[count % posterImages.length],
-        highlighted: posterImages[count % posterImages.length], // feel free to swap this out for a highlighted version
-        properties: {
-          image: posterLinks[count % posterLinks.length],
-          preview: posterLinks[count % posterLinks.length], // feel free to swap this out for a lower-res or preview version
-        },
-      });
-      count += 1;
-    }
-  }
-
-  await axios.post("https://gather.town/api/setMap", {
-    apiKey: API_KEY,
-    spaceId: SPACE_ID,
-    mapId: MAP_ID,
-    mapContent: Object.assign(BASE_MAP, {
-      objects: BASE_MAP.objects.concat(posters),
-    }),
-  });
-};
+const posterData = [...Array(24).keys()].map((i) => {
+	// actually fill in your own poster data here, this is just 24 identical ones
+	return {
+		posterImg:
+			"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F8ac167c6-e24b-4706-a19d-6079a3e30004?alt=media&token=4ff8d831-006c-4c9a-9ff0-740504b2bbd9",
+		posterPreview:
+			"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F9f48996d-9b50-480a-9ea6-46e98013204e?alt=media&token=c602f84d-8cf8-43a8-935a-b11a1030d8f0",
+		mapImg:
+			"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2Ff34f6bf2-3bf9-4d95-9fe5-280e5da132a0?alt=media&token=9bc3f3c3-b691-4688-b633-2b0082e3f014",
+		mapImgActive:
+			"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2Fbd842123-b038-4cf9-8e73-0fe335d56f0f?alt=media&token=86879c6d-2625-4379-8f23-6af0b22487d7",
+		zoomLink: "https://zoom.us",
+		// you can generate poster label images from an html canvas or any other way, then upload them with uploadFiles
+		numberImg:
+			"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F9ea396a7-924e-470b-ad4d-c40b1abe761a?alt=media&token=608596ac-9fd1-45ed-a8ae-5439495ddf39",
+	};
+});
 
 const BASE_MAP = {
-  id: MAP_ID,
-  backgroundImagePath:
-    "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/maps%2F862656fe-118c-46c3-a2d6-a8523c35e5be?alt=media&token=b19a7c27-4dd2-43da-b05d-38736b738739",
-  dimensions: [37, 25],
-  spawns: [
-    { x: 18, y: 22 },
-    { x: 19, y: 22 },
-  ],
-  collisions:
-    "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAEBAQABAQEAAQEBAAEBAQABAQEAAQEBAAEBAQABAQEAAAEBAAABAQEAAQEBAAEBAQABAQEAAQEBAAEBAQABAQEAAQEBAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAEBAQABAQEAAQEBAAEBAQABAQEAAQEBAAEBAQABAQEAAAEBAAABAQEAAQEBAAEBAQABAQEAAQEBAAEBAQABAQEAAQEBAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAEBAQABAQEAAQEBAAEBAQABAQEAAQEBAAEBAQABAQEAAAEBAAABAQEAAQEBAAEBAQABAQEAAQEBAAEBAQABAQEAAQEBAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEBAQEBAQEBAQEBAQEBAQEAAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQ==",
-  // ^ base64 encoded array of dimensions[1] x dimensions[0] bytes (each either 0x00 or 0x01)
-  objects: [
-    {
-      y: 23,
-      width: 4,
-      properties: {},
-      type: 0,
-      normal:
-        "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2F01dc91c3-2964-4d4b-8402-b7f1847e9fbe?alt=media&token=9ca34157-4983-4418-a723-6c64d1a33651",
-      highlighted:
-        "https://cdn.gather.town/v0/b/gather-town.appspot.com/o/assets%2Fd2832639-ad8c-49cd-a64e-888370694467?alt=media&token=e68c86f8-abe3-4ce4-be7f-c5fd5e452140",
-      scale: 1,
-      height: 2,
-      x: 17,
-    },
-  ],
-  spaces: [
-    { colored: false, x: 3, y: 6, spaceId: "1" },
-    { spaceId: "1", x: 4, colored: false, y: 6 },
-    { colored: false, spaceId: "1", y: 6, x: 5 },
-    { colored: false, x: 5, spaceId: "1", y: 7 },
-    { x: 5, spaceId: "1", colored: false, y: 8 },
-    { colored: false, y: 8, x: 4, spaceId: "1" },
-    { colored: false, y: 8, spaceId: "1", x: 3 },
-    { spaceId: "1", x: 3, colored: false, y: 7 },
-    { y: 7, spaceId: "1", colored: false, x: 4 },
-    { x: 7, spaceId: "2", y: 6, colored: false },
-    { spaceId: "2", y: 6, colored: false, x: 8 },
-    { x: 9, spaceId: "2", colored: false, y: 6 },
-    { y: 7, colored: false, x: 9, spaceId: "2" },
-    { spaceId: "2", colored: false, x: 9, y: 8 },
-    { spaceId: "2", y: 8, colored: false, x: 8 },
-    { x: 8, colored: false, y: 7, spaceId: "2" },
-    { colored: false, spaceId: "2", x: 7, y: 7 },
-    { colored: false, y: 8, x: 7, spaceId: "2" },
-    { y: 6, colored: false, x: 11, spaceId: "3" },
-    { spaceId: "3", colored: false, y: 6, x: 12 },
-    { x: 13, colored: false, y: 6, spaceId: "3" },
-    { y: 7, colored: false, spaceId: "3", x: 13 },
-    { y: 8, x: 13, colored: false, spaceId: "3" },
-    { colored: false, y: 8, spaceId: "3", x: 12 },
-    { x: 11, spaceId: "3", colored: false, y: 8 },
-    { colored: false, spaceId: "3", y: 7, x: 11 },
-    { x: 12, colored: false, y: 7, spaceId: "3" },
-    { x: 15, spaceId: "4", colored: false, y: 6 },
-    { x: 16, spaceId: "4", colored: false, y: 6 },
-    { x: 17, colored: false, y: 6, spaceId: "4" },
-    { x: 17, colored: false, y: 7, spaceId: "4" },
-    { spaceId: "4", colored: false, y: 8, x: 15 },
-    { y: 7, spaceId: "4", x: 15, colored: false },
-    { colored: false, y: 7, spaceId: "4", x: 16 },
-    { x: 16, y: 8, spaceId: "4", colored: false },
-    { x: 17, spaceId: "4", colored: false, y: 8 },
-    { y: 6, x: 19, spaceId: "5", colored: false },
-    { x: 20, colored: false, y: 6, spaceId: "5" },
-    { x: 21, colored: false, y: 6, spaceId: "5" },
-    { spaceId: "5", colored: false, y: 7, x: 21 },
-    { y: 8, x: 21, colored: false, spaceId: "5" },
-    { colored: false, x: 20, y: 8, spaceId: "5" },
-    { y: 7, spaceId: "5", x: 20, colored: false },
-    { colored: false, y: 7, spaceId: "5", x: 19 },
-    { y: 8, colored: false, x: 19, spaceId: "5" },
-    { y: 6, spaceId: "6", x: 23, colored: false },
-    { colored: false, y: 6, x: 24, spaceId: "6" },
-    { spaceId: "6", colored: false, y: 6, x: 25 },
-    { colored: false, spaceId: "6", y: 7, x: 25 },
-    { x: 25, y: 8, colored: false, spaceId: "6" },
-    { spaceId: "6", colored: false, y: 8, x: 24 },
-    { spaceId: "6", y: 8, x: 23, colored: false },
-    { x: 23, y: 7, spaceId: "6", colored: false },
-    { spaceId: "6", colored: false, x: 24, y: 7 },
-    { colored: false, x: 27, y: 6, spaceId: "7" },
-    { y: 6, colored: false, spaceId: "7", x: 28 },
-    { colored: false, x: 29, spaceId: "7", y: 6 },
-    { x: 29, colored: false, y: 7, spaceId: "7" },
-    { x: 29, spaceId: "7", y: 8, colored: false },
-    { y: 8, x: 28, spaceId: "7", colored: false },
-    { colored: false, spaceId: "7", y: 8, x: 27 },
-    { y: 7, spaceId: "7", colored: false, x: 27 },
-    { x: 28, colored: false, y: 7, spaceId: "7" },
-    { spaceId: "8", colored: false, x: 31, y: 6 },
-    { y: 7, x: 33, spaceId: "8", colored: false },
-    { spaceId: "8", colored: false, x: 33, y: 8 },
-    { colored: false, spaceId: "8", y: 6, x: 33 },
-    { y: 6, spaceId: "8", colored: false, x: 32 },
-    { colored: false, y: 7, spaceId: "8", x: 32 },
-    { spaceId: "8", y: 7, x: 31, colored: false },
-    { colored: false, y: 8, x: 31, spaceId: "8" },
-    { spaceId: "8", colored: false, x: 32, y: 8 },
-    { y: 12, x: 3, spaceId: "9", colored: false },
-    { x: 4, colored: false, y: 12, spaceId: "9" },
-    { colored: false, spaceId: "9", x: 5, y: 12 },
-    { colored: false, y: 13, x: 5, spaceId: "9" },
-    { y: 14, spaceId: "9", x: 3, colored: false },
-    { colored: false, spaceId: "9", y: 13, x: 3 },
-    { spaceId: "9", colored: false, y: 13, x: 4 },
-    { y: 14, x: 4, colored: false, spaceId: "9" },
-    { colored: false, y: 14, x: 5, spaceId: "9" },
-    { x: 7, y: 12, colored: false, spaceId: "10" },
-    { colored: false, spaceId: "10", y: 12, x: 8 },
-    { x: 9, spaceId: "10", colored: false, y: 14 },
-    { spaceId: "10", colored: false, y: 14, x: 8 },
-    { colored: false, spaceId: "10", y: 14, x: 7 },
-    { colored: false, x: 7, y: 13, spaceId: "10" },
-    { spaceId: "10", y: 13, x: 8, colored: false },
-    { colored: false, spaceId: "10", y: 13, x: 9 },
-    { y: 12, spaceId: "10", x: 9, colored: false },
-    { colored: false, spaceId: "11", y: 12, x: 11 },
-    { colored: false, y: 12, spaceId: "11", x: 12 },
-    { colored: false, spaceId: "11", y: 12, x: 13 },
-    { colored: false, spaceId: "11", x: 13, y: 13 },
-    { y: 14, colored: false, x: 13, spaceId: "11" },
-    { y: 14, spaceId: "11", x: 12, colored: false },
-    { x: 11, y: 14, colored: false, spaceId: "11" },
-    { colored: false, x: 11, spaceId: "11", y: 13 },
-    { colored: false, spaceId: "11", y: 13, x: 12 },
-    { colored: false, y: 12, spaceId: "12", x: 15 },
-    { colored: false, y: 12, x: 16, spaceId: "12" },
-    { x: 17, y: 12, colored: false, spaceId: "12" },
-    { x: 17, y: 13, spaceId: "12", colored: false },
-    { x: 17, colored: false, y: 14, spaceId: "12" },
-    { y: 14, x: 16, spaceId: "12", colored: false },
-    { colored: false, spaceId: "12", x: 15, y: 14 },
-    { colored: false, y: 13, spaceId: "12", x: 15 },
-    { x: 16, colored: false, y: 13, spaceId: "12" },
-    { spaceId: "13", colored: false, x: 19, y: 12 },
-    { colored: false, x: 20, y: 12, spaceId: "13" },
-    { y: 14, x: 21, colored: false, spaceId: "13" },
-    { spaceId: "13", colored: false, x: 21, y: 12 },
-    { spaceId: "13", colored: false, y: 13, x: 21 },
-    { colored: false, spaceId: "13", x: 20, y: 13 },
-    { colored: false, spaceId: "13", y: 14, x: 20 },
-    { y: 14, colored: false, x: 19, spaceId: "13" },
-    { spaceId: "13", y: 13, colored: false, x: 19 },
-    { colored: false, spaceId: "14", y: 12, x: 23 },
-    { y: 12, x: 24, colored: false, spaceId: "14" },
-    { y: 12, spaceId: "14", x: 25, colored: false },
-    { colored: false, x: 25, y: 13, spaceId: "14" },
-    { y: 14, x: 25, colored: false, spaceId: "14" },
-    { colored: false, spaceId: "14", x: 24, y: 14 },
-    { x: 23, y: 14, colored: false, spaceId: "14" },
-    { y: 13, x: 23, colored: false, spaceId: "14" },
-    { colored: false, x: 24, spaceId: "14", y: 13 },
-    { x: 27, colored: false, spaceId: "15", y: 12 },
-    { spaceId: "15", y: 12, colored: false, x: 28 },
-    { x: 29, colored: false, y: 12, spaceId: "15" },
-    { colored: false, y: 13, x: 29, spaceId: "15" },
-    { colored: false, x: 29, spaceId: "15", y: 14 },
-    { colored: false, spaceId: "15", x: 27, y: 13 },
-    { colored: false, x: 28, spaceId: "15", y: 13 },
-    { spaceId: "15", colored: false, x: 28, y: 14 },
-    { y: 14, spaceId: "15", x: 27, colored: false },
-    { colored: false, spaceId: "16", y: 12, x: 31 },
-    { colored: false, spaceId: "16", y: 12, x: 32 },
-    { colored: false, x: 33, y: 12, spaceId: "16" },
-    { spaceId: "16", y: 13, x: 33, colored: false },
-    { spaceId: "16", y: 14, x: 33, colored: false },
-    { colored: false, y: 14, x: 32, spaceId: "16" },
-    { colored: false, y: 14, x: 31, spaceId: "16" },
-    { y: 13, spaceId: "16", colored: false, x: 31 },
-    { x: 32, spaceId: "16", colored: false, y: 13 },
-    { y: 18, colored: false, spaceId: "17", x: 3 },
-    { x: 4, y: 18, spaceId: "17", colored: false },
-    { y: 18, colored: false, spaceId: "17", x: 5 },
-    { spaceId: "17", x: 5, colored: false, y: 19 },
-    { spaceId: "17", x: 5, y: 20, colored: false },
-    { y: 20, spaceId: "17", x: 4, colored: false },
-    { y: 20, spaceId: "17", x: 3, colored: false },
-    { y: 19, colored: false, spaceId: "17", x: 3 },
-    { spaceId: "17", colored: false, y: 19, x: 4 },
-    { spaceId: "18", x: 7, y: 18, colored: false },
-    { y: 18, x: 8, colored: false, spaceId: "18" },
-    { colored: false, y: 18, x: 9, spaceId: "18" },
-    { colored: false, spaceId: "18", x: 9, y: 19 },
-    { y: 20, spaceId: "18", colored: false, x: 9 },
-    { colored: false, spaceId: "18", y: 20, x: 8 },
-    { y: 20, x: 7, spaceId: "18", colored: false },
-    { x: 7, colored: false, spaceId: "18", y: 19 },
-    { y: 19, colored: false, x: 8, spaceId: "18" },
-    { y: 18, spaceId: "19", colored: false, x: 11 },
-    { y: 18, spaceId: "19", colored: false, x: 12 },
-    { colored: false, x: 13, spaceId: "19", y: 18 },
-    { colored: false, spaceId: "19", x: 13, y: 20 },
-    { spaceId: "19", colored: false, y: 20, x: 12 },
-    { x: 11, spaceId: "19", colored: false, y: 20 },
-    { colored: false, y: 19, x: 11, spaceId: "19" },
-    { spaceId: "19", colored: false, y: 19, x: 12 },
-    { y: 19, spaceId: "19", x: 13, colored: false },
-    { spaceId: "20", x: 15, colored: false, y: 18 },
-    { colored: false, x: 16, y: 18, spaceId: "20" },
-    { colored: false, y: 20, spaceId: "20", x: 17 },
-    { x: 16, spaceId: "20", colored: false, y: 20 },
-    { y: 20, x: 15, spaceId: "20", colored: false },
-    { spaceId: "20", colored: false, y: 19, x: 15 },
-    { spaceId: "20", x: 16, colored: false, y: 19 },
-    { y: 18, spaceId: "20", colored: false, x: 17 },
-    { y: 19, x: 17, colored: false, spaceId: "20" },
-    { spaceId: "21", colored: false, x: 19, y: 18 },
-    { colored: false, spaceId: "21", y: 18, x: 20 },
-    { spaceId: "21", y: 20, colored: false, x: 21 },
-    { colored: false, spaceId: "21", y: 20, x: 20 },
-    { spaceId: "21", y: 20, x: 19, colored: false },
-    { y: 19, colored: false, x: 19, spaceId: "21" },
-    { x: 20, colored: false, y: 19, spaceId: "21" },
-    { colored: false, y: 19, x: 21, spaceId: "21" },
-    { x: 21, spaceId: "21", colored: false, y: 18 },
-    { x: 25, spaceId: "22", colored: false, y: 18 },
-    { x: 25, spaceId: "22", y: 20, colored: false },
-    { colored: false, x: 24, y: 20, spaceId: "22" },
-    { spaceId: "22", y: 20, colored: false, x: 23 },
-    { spaceId: "22", y: 19, colored: false, x: 23 },
-    { spaceId: "22", y: 18, x: 23, colored: false },
-    { y: 18, spaceId: "22", x: 24, colored: false },
-    { y: 19, x: 24, spaceId: "22", colored: false },
-    { y: 19, colored: false, spaceId: "22", x: 25 },
-    { colored: false, x: 27, y: 18, spaceId: "23" },
-    { colored: false, y: 18, spaceId: "23", x: 28 },
-    { colored: false, y: 18, x: 29, spaceId: "23" },
-    { colored: false, y: 19, x: 29, spaceId: "23" },
-    { spaceId: "23", colored: false, y: 20, x: 27 },
-    { spaceId: "23", x: 27, y: 19, colored: false },
-    { x: 28, colored: false, y: 19, spaceId: "23" },
-    { x: 28, colored: false, y: 20, spaceId: "23" },
-    { y: 20, x: 29, spaceId: "23", colored: false },
-    { spaceId: "24", y: 18, colored: false, x: 31 },
-    { colored: false, spaceId: "24", y: 20, x: 31 },
-    { x: 32, spaceId: "24", colored: false, y: 20 },
-    { x: 33, y: 20, colored: false, spaceId: "24" },
-    { spaceId: "24", y: 19, x: 33, colored: false },
-    { x: 33, colored: false, y: 18, spaceId: "24" },
-    { y: 18, colored: false, x: 32, spaceId: "24" },
-    { spaceId: "24", x: 31, colored: false, y: 19 },
-    { y: 19, spaceId: "24", x: 32, colored: false },
-  ],
-  portals: [],
+	id: MAP_ID,
+	backgroundImagePath:
+		"https://cdn.gather.town/v0/b/gather-town.appspot.com/o/maps%2F8225d335-2e81-4264-a94f-5be4e31b5f63?alt=media&token=0d6c2671-1a65-4e2d-83f5-46da93acb82b",
+	dimensions: [WIDTH, HEIGHT],
+	spawns: [
+		// generally, adding many more than one is good practice so people don't all stack up in the same place
+		{ x: 47, y: 28 },
+	],
+	objects: [], // add random plants and whatever else here
+	portals: [
+		// for example:
+		{
+			x: 2,
+			y: 3,
+			targetUrl:
+				"https://gather.town/app/nO9uzqf6ZhzsXJ68/Grand%20Central%20Station",
+		},
+	],
 };
 
-writeMap();
+// takes local files, uploads them to Gather's storage
+const uploadFiles = async (filePaths) => {
+	const posterLinks = (
+		await Promise.all(
+			filePaths.map(async (path) => {
+				return {
+					[path]: await new Promise((resolve, reject) =>
+						fs.readFile(path, function (err, data) {
+							if (err) reject(err); // Fail if the file can't be read.
+							axios
+								.post("https://staging.gather.town/api/uploadImage", {
+									bytes: data,
+								})
+								.then((res) => resolve(res.data));
+						})
+					),
+				};
+			})
+		)
+	).reduce((obj, item) => Object.assign(obj, item), {});
+	// ^ sorry this is kind of spaghetti code, but the result is that posterLinks will have the form:
+	// {
+	//   filename1: "https://cdn.gather.town/uploadedPosterPath1",
+	//   filename2: "https://cdn.gather.town/uploadedPosterPath2",
+	//   filename3: "https://cdn.gather.town/uploadedPosterPath3",
+	// }
+
+	return posterLinks;
+};
+
+// takes basic poster data, and generates the map from it
+const writeMap = async (posterData) => {
+	let impassable = {}; // maps r,c to true if impassable
+	let zoomZones = [];
+	let posters = [];
+	let privateSpaces = [];
+
+	// arrange the posters in rows
+	posterData.forEach((poster, index) => {
+		const topleft = {
+			x: (index % 7) * 13 + 3,
+			y: parseInt(index / 7) * 13 + 4,
+		};
+
+		// the poster object
+		posters.push({
+			x: topleft.x,
+			y: topleft.y,
+			type: 2,
+			distThreshold: 1,
+			width: 10,
+			height: 8,
+			normal: poster.mapImg,
+			highlighted: poster.mapImgActive,
+			properties: {
+				image: poster.posterImg,
+				preview: poster.posterPreview,
+			},
+		});
+		// also the number label
+		posters.push({
+			x: topleft.x + 3,
+			y: topleft.y + 3,
+			normal: poster.numberImg,
+			type: 0,
+			width: 2,
+			height: 2,
+		});
+		// the zoom object, for backup
+		zoomZones.push({
+			x: topleft.x,
+			y: topleft.y + 8,
+			type: 4,
+			width: 10,
+			height: 2,
+			distThreshold: 0,
+			previewMessage: "press x for Zoom",
+			properties: {
+				zoomLink: poster.zoomLink,
+			},
+			normal: zoomZoneImg,
+			highlighted: zoomZoneImgActive,
+		});
+
+		// now for the impassible tiles on posters
+		for (let x = topleft.x + 3; x < topleft.x + 7; x++) {
+			for (let y = topleft.y + 3; y < topleft.y + 5; y++) {
+				impassable[[y, x]] = true;
+			}
+		}
+
+		// poster private space
+		for (let x = topleft.x; x < topleft.x + 10; x++) {
+			for (let y = topleft.y; y < topleft.y + 8; y++) {
+				privateSpaces.push({ x, y, spaceId: "p" + index });
+			}
+		}
+		// zoom private space
+		for (let x = topleft.x; x < topleft.x + 10; x++) {
+			for (let y = topleft.y + 8; y < topleft.y + 10; y++) {
+				privateSpaces.push({ x, y, spaceId: "z" + index });
+			}
+		}
+	});
+
+	// generate impassable bytemask
+	let collBytes = [];
+	for (let r = 0; r < HEIGHT; r++) {
+		for (let c = 0; c < WIDTH; c++) {
+			// edges are just definitely impassable
+			if (r < 2 || r > HEIGHT - 3 || c < 1 || c > WIDTH - 2)
+				collBytes.push(0x01);
+			// otherwise see if it's marked or not
+			else collBytes.push(impassable[[r, c]] ? 0x01 : 0x00);
+		}
+	}
+
+	await axios.post("https://gather.town/api/setMap", {
+		apiKey: API_KEY,
+		spaceId: SPACE_ID,
+		mapId: MAP_ID,
+		mapContent: Object.assign(BASE_MAP, {
+			objects: BASE_MAP.objects.concat(posters).concat(zoomZones),
+			spaces: privateSpaces,
+			collisions: new Buffer(collBytes).toString("base64"),
+			// ^ base64 encoded array of dimensions[1] x dimensions[0] bytes (each either 0x00 or 0x01)
+		}),
+	});
+};
+
+// uploadFiles([
+// 	"/home/npfoss/Downloads/poster1.jpg",
+// 	"/home/npfoss/Downloads/poster2.jpg",
+// ]).then(console.log);
+writeMap(posterData);
