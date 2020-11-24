@@ -60,9 +60,13 @@ const uploadFiles = async (filePaths) => {
 						fs.readFile(path, function (err, data) {
 							if (err) reject(err); // Fail if the file can't be read.
 							axios
-								.post("https://staging.gather.town/api/uploadImage", {
-									bytes: data,
-								})
+								.post(
+									"https://staging.gather.town/api/uploadImage",
+									{
+										bytes: data,
+									},
+									{ maxContentLength: Infinity, maxBodyLength: Infinity }
+								)
 								.then((res) => resolve(res.data));
 						})
 					),
