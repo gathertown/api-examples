@@ -62,14 +62,16 @@ const uploadFiles = async (filePaths) => {
 							axios
 								.post(
 									"https://staging.gather.town/api/uploadImage",
+									// "http://localhost:3000/api/uploadImage",
 									{
 										bytes: data,
+										spaceId: SPACE_ID,
 									},
 									{ maxContentLength: Infinity, maxBodyLength: Infinity }
 								)
 								.then((res) => resolve(res.data));
 						})
-					),
+					)	,
 				};
 			})
 		)
