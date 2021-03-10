@@ -61,7 +61,7 @@ const uploadFiles = async (filePaths) => {
 							if (err) reject(err); // Fail if the file can't be read.
 							axios
 								.post(
-									"https://staging.gather.town/api/uploadImage",
+									"https://gather.town/api/uploadImage",
 									// "http://localhost:3000/api/uploadImage",
 									{
 										bytes: data,
