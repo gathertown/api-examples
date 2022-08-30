@@ -6,7 +6,15 @@ documentation: https://gathertown.notion.site/Gather-HTTP-API-3bbf6c59325f40aca7
 
 install NodeJS and npm
 
-make sure to replace the data in config.js with your own. i.e. API keys can be generated [here](https://gather.town/apiKeys)
+get an API key [here](https://gather.town/apiKeys)
+
+create a file called `config.js` that looks like this, but with your own data instead:
+```js
+module.exports = {
+	SPACE_ID: "oFz81x6whatever\\SpaceName", // note the \, NOT / as is in the URL
+	API_KEY: "YOUR KEY HERE",
+};
+```
 
 `npm install`
 
