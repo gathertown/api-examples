@@ -1,0 +1,21 @@
+{
+  "name": "api-examples",
+  "version": "1.0.0",
+  "description": "example usage of the gather http api",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gathertown/api-examples.git"
+  },
+  "author": "npfoss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gathertown/api-examples/issues"
+  },
+  "homepage": "https://github.com/gathertown/api-examples#readme",
+  "dependencies": {
+    "axios": "^0.27.2"
+  }
+}
