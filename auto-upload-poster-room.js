@@ -190,4 +190,4 @@ const writeMap = async (posterData) => {
 // 	"/home/npfoss/Downloads/poster1.jpg",
 // 	"/home/npfoss/Downloads/poster2.jpg",
 // ]).then(console.log);
-writeMap(posterData);
+writeMap(posterData).catch(console.error);
