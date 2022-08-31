@@ -28,6 +28,10 @@ example: `node auto-upload-poster-room.js`
 
 Simplest example of fetching map data, with axios
 
+### set-map.js
+
+Simplest example of setting map data, with axios
+
 ### `auto-upload-poster-room.js`
 
 Example of generating a poster session room given a set of poster URLs, including generating impassible tiles, etc.
