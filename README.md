@@ -24,6 +24,10 @@ example: `node auto-upload-poster-room.js`
 
 ## examples
 
+### create-space.js
+
+Simplest example of creating a new space, using an existing one as a template
+
 ### get-map.js
 
 Simplest example of fetching map data, with axios
