@@ -7,7 +7,7 @@ axios
   .post(
     `https://api.gather.town/api/v2/spaces/${encodeURIComponent(
       SPACE_ID
-    )}/maps/${encodeURIComponent(MAP_ID)}`,
+    )}/maps/${encodeURIComponent(MAP_ID)}?useV2Map=true`,
     {
       content: {
         // example map data -- but you can set much more than this
