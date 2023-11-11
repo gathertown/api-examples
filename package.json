@@ -14,6 +14,6 @@
   },
   "homepage": "https://github.com/gathertown/api-examples#readme",
   "dependencies": {
-    "axios": "^0.27.2"
+    "axios": "^1.6.0"
   }
 }
